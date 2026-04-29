@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  .auth-container
+    h1 Entrenar Precisión
+    form(action="/auth/login", method="POST")
+      h3 Iniciar Sesión
+      input(type="text", name="username", placeholder="Usuario", required)
+      input(type="password", name="password", placeholder="Contraseña", required)
+      button(type="submit") Entrar
+    
+    hr
+    
+    form(action="/auth/register", method="POST")
+      h3 ¿Nuevo aquí? Regístrate
+      input(type="text", name="username", placeholder="Nuevo Usuario", required)
+      input(type="password", name="password", placeholder="Nueva Contraseña", required)
+      button(type="submit", style="background: #333") Crear Cuenta

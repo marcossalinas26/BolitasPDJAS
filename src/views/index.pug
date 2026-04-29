@@ -1,0 +1,32 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    title Aim Trainer - Selección
+    style.
+      body { font-family: sans-serif; background: #1a1a1a; color: white; text-align: center; }
+      .container { margin-top: 100px; }
+      .card { 
+        display: inline-block; width: 200px; padding: 20px; margin: 20px;
+        border: 2px solid #333; border-radius: 10px; cursor: pointer;
+        transition: 0.3s;
+      }
+      .card:hover { border-color: #00ff00; background: #252525; }
+      button { background: #00ff00; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
+
+  body
+    h1 Bienvenido al Aim Trainer MVC
+    .container
+      .card(onclick="window.location.href='/game/gridshot'")
+        h2 Gridshot
+        p 3 objetivos fijos.
+        p Velocidad y ritmo.
+      
+      .card(onclick="window.location.href='/game/sixshot'")
+        h2 Sixshot
+        p 6 objetivos pequeños.
+        p Precisión extrema.
+    
+    br
+    a(href="/logout")
+      button Salir
