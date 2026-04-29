@@ -1,3 +1,5 @@
+const Game = require('../models/Game');
+
 exports.saveScore = async (req, res) => {
     const { points, game_type } = req.body;
     const userId = req.session.userId; // Obtenido del login

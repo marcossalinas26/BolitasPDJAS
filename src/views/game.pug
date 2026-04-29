@@ -1,0 +1,76 @@
+extends layout
+
+block content
+  .game-container
+    .game-header
+      h2 Modo: 
+        span.mode-name #{mode.toUpperCase()}
+      .stats-bar
+        .stat-item
+          span.label Puntos: 
+          span#score-display.value 0
+        .stat-item
+          span.label Precisión: 
+          span#accuracy-display.value 0%
+        .stat-item
+          span.label Tiempo: 
+          span#timer-display.value 30s
+
+    canvas#gameCanvas(width="800" height="600")
+    
+    // Contenedor para mensajes (Game Over, etc)
+    #game-overlay.hidden
+      .message-box
+        h3 ¡Fin de la partida!
+        p#final-stats Calculando...
+        button(onclick="location.reload()") Reintentar
+        a.btn-home(href="/") Volver al inicio
+
+  // 1. Cargamos el script específico según el modo (gridshot o sixshot)
+  // Asegúrate de que el archivo en public/js se llame igual que el modo
+  script(src=`/js/${mode}.js`)
+
+  // 2. Lógica de control y comunicación con el Backend
+  script.
+    // Variables globales que usará tu archivo js (gridshot.js / sixshot.js)
+    const GAME_MODE = "#{mode}";
+    
+    // Función que llamará tu código de las bolitas cuando el tiempo llegue a 0
+    async function finalizarPartida(puntos, precision) {
+      console.log("Guardando puntuación...");
+      
+      try {
+        const response = await fetch('/api/score', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            points: puntos,
+            accuracy: precision,
+            gameType: GAME_MODE
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+          document.getElementById('final-stats').innerText = 
+            `Puntos: ${puntos} | Precisión: ${precision}%`;
+          document.getElementById('game-overlay').classList.remove('hidden');
+        } else {
+          alert("Error al guardar la puntuación en la base de datos.");
+        }
+      } catch (error) {
+        console.error("Error en la petición POST:", error);
+      }
+    }
+
+    // Inicialización al cargar la página
+    window.onload = () => {
+      if (typeof initGame === 'function') {
+        initGame(); 
+      } else {
+        console.error("Error: No se encontró la función initGame() en /js/" + GAME_MODE + ".js");
+      }
+    };

@@ -20,12 +20,17 @@ exports.login = async (req, res) => {
         if (user && await bcrypt.compare(password, user.password)) {
             req.session.userId = user.id; // Guardar ID en sesión
             req.session.username = user.username; // Guardar username en sesión
-            res.json({ message: "Login exitoso", user: { id: user.id, username: user.username } });
+            res.redirect('/'); 
         }else {
             res.status(401).json({ error: "Credenciales inválidas" });
         }
 };
 exports.logout = (req, res) => {
-    req.session.destroy();
-    res.redirect('/login');
+    req.session.destroy((err) => {
+        if (err) return res.redirect('/');
+        res.clearCookie('connect.sid');
+        res.redirect('/login'); // Te manda a la pantalla de login limpia
+    });
 };
+
+

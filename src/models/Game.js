@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+const pool = require('../../config/db'); // He añadido un par de puntos extra
 
 const Game = {
     // Guardar puntuación de una partida

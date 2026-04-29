@@ -3,21 +3,23 @@ exports.renderLogin = (req, res) => {
 };
 
 exports.renderHome = (req, res) => {
-    if (req.session.userId) {
+    // Si NO hay sesión, mandamos al login
+    if (!req.session.userId) {
         return res.redirect('/login');
     }
     res.render('index', { username: req.session.username });
+};
 
-}
-exports.renderGrishot = (req, res) => {
+exports.renderGridshot = (req, res) => { 
     if (!req.session.userId) {
         return res.redirect('/login');
-        res.render('grishot', { mode:'grishot', username: req.session.username });
-    };}
+    }
+    res.render('game', { mode: 'gridshot', username: req.session.username });
+};
 
 exports.renderSixshot = (req, res) => {
     if (!req.session.userId) {
         return res.redirect('/login');
-        res.render('sixshot', { mode:'sixshot', username: req.session.username });
-    };
-}
+    }
+    res.render('game', { mode: 'sixshot', username: req.session.username });
+};

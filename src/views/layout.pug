@@ -1,16 +1,16 @@
 doctype html
 html(lang="es")
   head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    title Aim Trainer MVC
+    title Aim Trainer - Bolitas
     link(rel="stylesheet", href="/css/style.css")
+    meta(charset="UTF-8")
   body
     nav
-      .logo Bolitas Aim Trainer
+      a(href="/") Inicio
       if username
         span Bienvenido, #{username}
-        a(href="/auth/logout") Salir
-    
-    main
-      block content
+        a(href="/auth/logout") Cerrar Sesión
+      else
+        a(href="/auth/login") Iniciar Sesión
+
+    block content
