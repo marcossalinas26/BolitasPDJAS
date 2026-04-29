@@ -70,3 +70,22 @@ function gameLoop() {
     );
     requestAnimationFrame(gameLoop);
 }
+async function saveGameResults (finalScore, hits, totalClicks) {
+
+    const accuracy = totalClicks > 0 ? (hits / totalClicks) * 100 : 0;
+    const response = await fetch('/api/games/score', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            gameType: 'gridshot',
+            points: finalScore,
+            accuracy: accuracy.toFixed(2)
+        })
+    });
+    const result = await response.json();
+    if (result.status === 'success') {
+        alert(`Partida guardada! Puntos: ${finalScore}`);
+        window.location.href = '/';
+    }}
