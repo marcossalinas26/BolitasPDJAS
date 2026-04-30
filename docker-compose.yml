@@ -13,6 +13,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - bolitas_netowrk
 
   pgadmin:
     image: dpage/pgadmin4
@@ -26,7 +28,11 @@ services:
       - pgadmin_data:/var/lib/pgadmin
     depends_on:
       - db
+    networks:
+      - bolitas_netowrk
 
 volumes:
   postgres_data:
   pgadmin_data:
+networks:
+  bolitas_netowrk:

@@ -1,5 +1,4 @@
-const pool = require('../../config/db'); // He añadido un par de puntos extra
-
+const pool = require('../../config/db'); 
 const Game = {
     // Guardar puntuación de una partida
     async saveScore(userId, gameType, points, accuracy) {
@@ -23,6 +22,5 @@ const Game = {
         const { rows } = await pool.query(query, [gameType]);
         return rows;
     }
-};
-
+}
 module.exports = Game;
