@@ -121,12 +121,12 @@
 
         targets.forEach(target => {
             const age = Date.now() - target.spawnTime;
-            const scale = Math.min(age / 100, 1); // Aparición más rápida que Gridshot
+            const scale = Math.min(age / 100, 1);
 
             ctx.beginPath();
             ctx.arc(target.x, target.y, TARGET_RADIUS * scale, 0, Math.PI * 2);
 
-            // Estilo visual: Rojo/Coral para diferenciarlo de Gridshot
+           
             const grad = ctx.createRadialGradient(target.x, target.y, 0, target.x, target.y, TARGET_RADIUS);
             grad.addColorStop(0, '#ff9f91');
             grad.addColorStop(1, '#ff4757');
@@ -141,13 +141,8 @@
         requestAnimationFrame(gameLoop);
     }
     function endGame() {
-        // Si el juego no está activo o llevamos menos de 1 segundo jugando, 
-        // bloqueamos el final de partida para evitar el bug de inicio.
         if (!gameActive) return;
-
         console.log("Intentando finalizar partida... Tiempo restante:", timeLeft);
-
-        // PROTECCIÓN EXTRA: Solo permite terminar si el tiempo es realmente 0
         if (timeLeft > 0) {
             console.warn("Se intentó cerrar el juego antes de tiempo. Bloqueado.");
             return;
@@ -165,8 +160,6 @@
             window.saveGameResults(score, accuracy);
         }
     }
-
-    // Event Listener
     document.addEventListener('mousedown', (e) => {
         if (e.target.id === 'gameCanvas') {
             onMouseDown(e);

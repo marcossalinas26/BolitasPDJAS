@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 router.get('/login', viewController.renderLogin);
 router.get('/', viewController.renderHome);
 
-// Rutas protegidas
+
 router.get('/game/gridshot', authMiddleware, viewController.renderGridshot);
 router.get('/game/sixshot', authMiddleware, viewController.renderSixshot);
 
