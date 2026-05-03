@@ -1,32 +1,78 @@
-doctype html
-html(lang="es")
-  head
-    meta(charset="UTF-8")
-    title Aim Trainer - Selección
-    style.
-      body { font-family: sans-serif; background: #1a1a1a; color: white; text-align: center; }
-      .container { margin-top: 100px; }
-      .card { 
-        display: inline-block; width: 200px; padding: 20px; margin: 20px;
-        border: 2px solid #333; border-radius: 10px; cursor: pointer;
-        transition: 0.3s;
-      }
-      .card:hover { border-color: #00ff00; background: #252525; }
-      button { background: #00ff00; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
+extends layout
 
-  body
-    h1 Bienvenido al Aim Trainer MVC
-    .container
-      .card(onclick="window.location.href='/game/gridshot'")
+block content
+  .container
+    // Hero Section
+    section(style="text-align: center; margin-bottom: 5rem; animation: fadeIn 1s ease-out;")
+      img(src="/images/logo.png", alt="Bolitas Logo", style="width: 180px; margin-bottom: 2rem; filter: drop-shadow(0 0 20px rgba(88, 166, 255, 0.3));")
+      h1(style="font-size: 3.5rem; margin-bottom: 1rem; background: linear-gradient(90deg, #fff, #58a6ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;") BOLITAS
+      p(style="color: #8b949e; font-size: 1.25rem; max-width: 700px; margin: 0 auto 3rem;") 
+        | El entrenador de puntería definitivo diseñado para perfeccionar tu precisión, 
+        | tiempo de reacción y micro-ajustes en juegos competitivos.
+
+    // About Section
+    section(style="background: #161b22; padding: 3rem; border-radius: 24px; border: 1px solid #30363d; margin-bottom: 5rem;")
+      .dashboard-grid(style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));")
+        div(style="padding: 1rem;")
+          h3(style="color: #58a6ff;") Precisión Quirúrgica
+          p(style="color: #8b949e;") Entrena tu memoria muscular para alcanzar objetivos pequeños con el modo Sixshot.
+        div(style="padding: 1rem;")
+          h3(style="color: #58a6ff;") Velocidad Extrema
+          p(style="color: #8b949e;") Mejora tu tiempo de reacción y ritmo de disparo con el modo Gridshot.
+        div(style="padding: 1rem;")
+          h3(style="color: #58a6ff;") Seguimiento Real
+          p(style="color: #8b949e;") Guarda tus mejores puntuaciones y compite en el ranking global de la comunidad.
+
+    // Game Selection
+    h2(style="text-align: center; margin-bottom: 3rem;") Selecciona tu modo de entrenamiento
+    .dashboard-grid
+      .game-card(onclick="window.location.href='/game/gridshot'")
+        div(style="background: rgba(88, 166, 255, 0.1); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;")
+          span(style="font-size: 2rem;") ⚡
         h2 Gridshot
-        p 3 objetivos fijos.
-        p Velocidad y ritmo.
-      
-      .card(onclick="window.location.href='/game/sixshot'")
+        p 3 objetivos grandes. Ideal para calentar y mejorar la fluidez de movimiento.
+        button Jugar Ahora
+
+      .game-card(onclick="window.location.href='/game/sixshot'")
+        div(style="background: rgba(248, 81, 73, 0.1); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;")
+          span(style="font-size: 2rem;") 🎯
         h2 Sixshot
-        p 6 objetivos pequeños.
-        p Precisión extrema.
-    
-    br
-    a(href="/auth/logout")
-      button Salir
+        p 6 micro-objetivos. Diseñado para perfeccionar la precisión en distancias largas.
+        button(style="background: #f85149;") Jugar Ahora
+
+    // Ranking Section
+    section(style="margin-top: 6rem; padding-bottom: 4rem;")
+      h2(style="text-align: center; margin-bottom: 2.5rem;") Hall of Fame (Top 10)
+      .auth-container(style="max-width: 800px; padding: 2.5rem; background: rgba(13, 17, 23, 0.6); backdrop-filter: blur(10px);")
+        table(style="width: 100%; border-collapse: collapse;")
+          thead
+            tr(style="border-bottom: 2px solid #30363d; color: #8b949e;")
+              th(style="padding: 1.2rem; text-align: left;") Rango
+              th(style="padding: 1.2rem; text-align: left;") Usuario
+              th(style="padding: 1.2rem; text-align: center;") Puntos
+              th(style="padding: 1.2rem; text-align: right;") Precisión
+          tbody#leaderboard-body
+            tr
+              td(colspan="4", style="padding: 3rem; text-align: center; color: #8b949e;") Cargando ranking global...
+
+  script.
+    async function loadRanking() {
+      try {
+        const response = await fetch('/api/ranking/gridshot');
+        const result = await response.json();
+        if (result.status === 'success') {
+          const tbody = document.getElementById('leaderboard-body');
+          tbody.innerHTML = result.data.map((row, index) => `
+            <tr style="border-bottom: 1px solid #21262d; transition: background 0.3s;" onmouseover="this.style.background='rgba(88,166,255,0.05)'" onmouseout="this.style.background='transparent'">
+              <td style="padding: 1.2rem; text-align: left; color: #8b949e;">#${index + 1}</td>
+              <td style="padding: 1.2rem; text-align: left; font-weight: 600;">${row.username}</td>
+              <td style="padding: 1.2rem; text-align: center; color: #58a6ff; font-weight: 700;">${row.points}</td>
+              <td style="padding: 1.2rem; text-align: right; color: #3fb950;">${row.accuracy}%</td>
+            </tr>
+          `).join('') || '<tr><td colspan="4" style="padding: 2rem; text-align: center;">Aún no hay leyendas registradas</td></tr>';
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    loadRanking();

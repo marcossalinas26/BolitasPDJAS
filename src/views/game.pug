@@ -1,76 +1,115 @@
 extends layout
 
 block content
-  .game-container
+  style.
+    /* Asegura que la clase hidden oculte todo de verdad */
+    .hidden { display: none !important; }
+    #start-overlay, #game-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(13, 17, 23, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+  .game-container(style="position: relative;")
     .game-header
-      h2 Modo: 
-        span.mode-name #{mode.toUpperCase()}
+      .mode-info
+        h2(style="margin: 0; font-size: 1.2rem; color: #8b949e;") MODO
+        span.mode-name(style="font-size: 1.8rem; font-weight: 700; color: #58a6ff;") #{mode.toUpperCase()}
+      
       .stats-bar
         .stat-item
-          span.label Puntos: 
+          span.label PUNTOS
           span#score-display.value 0
         .stat-item
-          span.label Precisión: 
+          span.label PRECISIÓN
           span#accuracy-display.value 0%
         .stat-item
-          span.label Tiempo: 
+          span.label TIEMPO
           span#timer-display.value 30s
 
-    canvas#gameCanvas(width="800" height="600")
+    // Pantalla de inicio
+    #start-overlay
+      .message-box
+        h2(style="color: #58a6ff;") #{mode.toUpperCase()}
+        p Prepárate para entrenar tu puntería.
+        button#btn-start(onclick="comenzarJuego(event)") Empezar
+
+    // El lienzo del juego
+    canvas#gameCanvas(width="800" height="600" style="background: #000; display: block; margin: 0 auto;")
     
-    // Contenedor para mensajes (Game Over, etc)
+    // Pantalla de fin de partida
     #game-overlay.hidden
       .message-box
-        h3 ¡Fin de la partida!
-        p#final-stats Calculando...
-        button(onclick="location.reload()") Reintentar
-        a.btn-home(href="/") Volver al inicio
+        h3(style="color: #58a6ff;") ¡Fin de la partida!
+        p#final-stats Calculando puntuación...
+        div(style="display: flex; gap: 1rem; flex-direction: column;")
+          button(onclick="comenzarJuego(event)") Reintentar
+          a.btn-home(href="/") Volver al Inicio
 
-  // 1. Cargamos el script específico según el modo (gridshot o sixshot)
-  // Asegúrate de que el archivo en public/js se llame igual que el modo
+  // Cargamos el script del modo (gridshot.js o sixshot.js)
   script(src=`/js/${mode}.js`)
 
-  // 2. Lógica de control y comunicación con el Backend
   script.
-    // Variables globales que usará tu archivo js (gridshot.js / sixshot.js)
     const GAME_MODE = "#{mode}";
     
-    // Función que llamará tu código de las bolitas cuando el tiempo llegue a 0
-    async function finalizarPartida(puntos, precision) {
-      console.log("Guardando puntuación...");
+    function comenzarJuego(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
       
+      const startOverlay = document.getElementById('start-overlay');
+      const gameOverlay = document.getElementById('game-overlay');
+
+      // Ocultar capas con fuerza bruta
+      if (startOverlay) startOverlay.style.setProperty('display', 'none', 'important');
+      if (gameOverlay) {
+        gameOverlay.classList.add('hidden');
+        gameOverlay.style.setProperty('display', 'none', 'important');
+      }
+      
+      console.log("Iniciando partida de " + GAME_MODE);
+      
+      if (typeof window.initGame === 'function') {
+        window.initGame(); 
+      }
+    }
+
+    async function saveGameResults(puntos, precision) {
+      const finalStats = document.getElementById('final-stats');
+      const gameOverlay = document.getElementById('game-overlay');
+
+      if (finalStats) finalStats.innerText = `Puntos: ${puntos} | Precisión: ${precision}%`;
+      
+      if (gameOverlay) {
+        gameOverlay.classList.remove('hidden');
+        gameOverlay.style.setProperty('display', 'flex', 'important');
+      }
+
       try {
-        const response = await fetch('/api/score', {
+        await fetch('/api/score', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             points: puntos,
             accuracy: precision,
             gameType: GAME_MODE
           })
         });
-
-        const data = await response.json();
-        
-        if (data.status === 'success') {
-          document.getElementById('final-stats').innerText = 
-            `Puntos: ${puntos} | Precisión: ${precision}%`;
-          document.getElementById('game-overlay').classList.remove('hidden');
-        } else {
-          alert("Error al guardar la puntuación en la base de datos.");
-        }
       } catch (error) {
-        console.error("Error en la petición POST:", error);
+        console.error("Error al guardar:", error);
       }
     }
 
-    // Inicialización al cargar la página
-    window.onload = () => {
-      if (typeof initGame === 'function') {
-        initGame(); 
-      } else {
-        console.error("Error: No se encontró la función initGame() en /js/" + GAME_MODE + ".js");
-      }
-    };
+    // Al cargar la página, aseguramos que el estado sea el correcto
+    document.addEventListener('DOMContentLoaded', () => {
+      const gameOverlay = document.getElementById('game-overlay');
+      if (gameOverlay) gameOverlay.classList.add('hidden');
+    });

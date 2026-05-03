@@ -1,16 +1,20 @@
 doctype html
 html(lang="es")
   head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title Aim Trainer - Bolitas
     link(rel="stylesheet", href="/css/style.css")
-    meta(charset="UTF-8")
   body
     nav
-      a(href="/") Inicio
-      if username
-        span Bienvenido, #{username}
-        a(href="/auth/logout") Cerrar Sesión
-      else
-        a(href="/login") Iniciar Sesión
+      a.logo(href="/") BOLITAS
+      .nav-links
+        a(href="/") Inicio
+        if username
+          span(style="color: #8b949e") Hola, #{username}
+          a(href="/auth/logout", style="color: #f85149") Salir
+        else
+          a(href="/login") Iniciar Sesión
 
-    block content
+    main
+      block content

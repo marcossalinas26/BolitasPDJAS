@@ -1,29 +1,29 @@
 const Game = require('../models/Game');
 
-exports.postScore = async (req, res) => {
+exports.postScore = async (req, res, next) => {
     try {
         const { points, accuracy, gameType } = req.body;
-        
-        
-        const userId = req.session.userId || 1;
+        const userId = req.session.userId;
+
+        if (!userId) {
+            return res.status(401).json({ status: 'error', message: 'Debe iniciar sesión' });
+        }
 
         const newScore = await Game.saveScore(userId, gameType, points, accuracy);
         res.status(201).json({ status: 'success', data: newScore });
     } 
     catch (error) {
-        console.error("Error en postScore:", error);
-        res.status(500).json({ status: 'error', message: 'Error saving score' });
+        next(error);
     }
 }; 
 
-exports.getRanking = async (req, res) => {
+exports.getRanking = async (req, res, next) => {
     try {
         const { gameType } = req.params;
         const leaderboard = await Game.getLeaderboard(gameType);
-        res.json(leaderboard);
+        res.json({ status: 'success', data: leaderboard });
     }
     catch (error) {
-        console.error("Error en getRanking:", error);
-        res.status(500).json({ status: 'error', message: 'Error fetching leaderboard' });
+        next(error);
     }
 };

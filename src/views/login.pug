@@ -2,17 +2,57 @@ extends layout
 
 block content
   .auth-container
-    h1 Entrenar Precisión
-    form(action="/auth/login", method="POST")
-      h3 Iniciar Sesión
-      input(type="text", name="username", placeholder="Usuario", required)
-      input(type="password", name="password", placeholder="Contraseña", required)
-      button(type="submit") Entrar
-    
-    hr
-    
-    form(action="/auth/register", method="POST")
-      h3 ¿Nuevo aquí? Regístrate
-      input(type="text", name="username", placeholder="Nuevo Usuario", required)
-      input(type="password", name="password", placeholder="Nueva Contraseña", required)
-      button(type="submit", style="background: #333") Crear Cuenta
+    #login-form
+      h1 Iniciar Sesión
+      form(action="/auth/login", method="POST")
+        .form-group
+          label Usuario
+          input(type="text", name="username", required, placeholder="Tu nombre de usuario")
+        .form-group
+          label Contraseña
+          input(type="password", name="password", required, placeholder="••••••••")
+        button(type="submit") Entrar
+      p(style="margin-top: 1.5rem; color: #8b949e;") ¿No tienes cuenta? 
+        a(href="#", onclick="toggleAuth()", style="color: #58a6ff; text-decoration: none;") Regístrate
+
+    #register-form.hidden
+      h1 Crear Cuenta
+      form#reg-form
+        .form-group
+          label Usuario
+          input(type="text", name="username", required, placeholder="Elige un usuario")
+        .form-group
+          label Contraseña
+          input(type="password", name="password", required, placeholder="Mínimo 6 caracteres")
+        button(type="submit") Registrarse
+      p(style="margin-top: 1.5rem; color: #8b949e;") ¿Ya tienes cuenta? 
+        a(href="#", onclick="toggleAuth()", style="color: #58a6ff; text-decoration: none;") Inicia Sesión
+
+  script.
+    function toggleAuth() {
+      document.getElementById('login-form').classList.toggle('hidden');
+      document.getElementById('register-form').classList.toggle('hidden');
+    }
+
+    document.getElementById('reg-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (response.ok) {
+          alert('¡Cuenta creada! Ahora puedes iniciar sesión.');
+          toggleAuth();
+        } else {
+          alert(result.error);
+        }
+      } catch (err) {
+        alert('Error en el registro');
+      }
+    });
