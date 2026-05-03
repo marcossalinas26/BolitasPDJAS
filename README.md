@@ -15,10 +15,12 @@ Bolitas es una web sencilla pero potente para que calientes antes de tus partida
 
 Para que esto vuele, hemos usado:
 *   **Node.js & Express:** El motor que mueve toda la lógica.
-*   **PostgreSQL:** Para que tus puntuaciones no se pierdan en el olvido.
-*   **Docker:** Para que no te vuelvas loco instalando cosas. `docker-compose up` y a correr.
-*   **Pug:** Para que las pantallas se vean bonitas y modernas.
-*   **CSS Puro:** Diseño *Glassmorphism* oscuro, porque los gamers odiamos el modo claro.
+*   **PostgreSQL & Sequelize (ORM):** Gestión de datos robusta y segura.
+*   **Sistema de Roles:** Acceso diferenciado para Usuarios y Administradores.
+*   **Panel de Administración:** Gestión dinámica de modos de juego y visualización de estadísticas.
+*   **Docker:** `docker-compose up` y a correr.
+*   **Pug:** Vistas dinámicas y modernas.
+*   **CSS Puro:** Diseño *Glassmorphism* optimizado para gamers.
 
 ## 🏃 Cómo ponerlo a andar
 
@@ -37,7 +39,8 @@ Si quieres montarlo en tu PC, es un paseo:
     ```bash
     npm run dev
     ```
-5.  **¡A jugar!** Entra en `http://localhost:3000` y empieza a darle a las bolitas.
+5.  **¡A jugar!** Entra en `http://localhost:3000`.
+6.  **Admin Access:** Puedes entrar al panel de administración con `admin` / `admin123`.
 
 ## 📝 Notas del autor
 

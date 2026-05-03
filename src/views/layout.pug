@@ -11,6 +11,8 @@ html(lang="es")
       .nav-links
         a(href="/") Inicio
         if username
+          if role === 'admin'
+            a(href="/admin", style="color: #58a6ff; font-weight: bold;") Panel Admin
           span(style="color: #8b949e") Hola, #{username}
           a(href="/auth/logout", style="color: #f85149") Salir
         else

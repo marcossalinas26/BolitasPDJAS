@@ -1,19 +1,37 @@
-const pool = require('../../config/db');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../../config/sequelize');
 
-const User = {
-  
-    async create(username, password) {
-        const query = `
-            INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id, username`;
-        const { rows } = await pool.query(query, [username, password]);
-        return rows[0];
+/**
+ * User Model
+ * Represents a registered user in the system.
+ */
+const User = sequelize.define('User', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
-
-   
-    async findByUsername(username) {
-        const res = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-        return res.rows[0];
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: {
+            msg: 'El nombre de usuario ya está en uso'
+        },
+        validate: {
+            len: [3, 20]
+        }
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    role: {
+        type: DataTypes.ENUM('user', 'admin'),
+        defaultValue: 'user'
     }
-};
+}, {
+    tableName: 'users',
+    timestamps: true
+});
 
-module.exports = User; 
+module.exports = User;

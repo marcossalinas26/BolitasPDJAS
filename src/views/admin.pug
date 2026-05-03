@@ -1,0 +1,90 @@
+extends layout
+
+block content
+  .container
+    h1(style="margin-bottom: 2rem; color: #58a6ff;") Panel de Administración
+    
+    .dashboard-grid(style="margin-bottom: 4rem;")
+      .game-card(style="cursor: default;")
+        h3 Usuarios Totales
+        p(style="font-size: 3rem; color: #58a6ff; font-weight: 700;")= usersCount
+      
+      .game-card(style="cursor: default;")
+        h3 Partidas Jugadas
+        p(style="font-size: 3rem; color: #3fb950; font-weight: 700;")= scoresCount
+
+    section(style="background: #161b22; padding: 2.5rem; border-radius: 20px; border: 1px solid #30363d;")
+      h2(style="margin-bottom: 2rem;") Gestionar Modos de Juego
+      
+      table(style="width: 100%; border-collapse: collapse; margin-bottom: 3rem;")
+        thead
+          tr(style="border-bottom: 2px solid #30363d; color: #8b949e; text-align: left;")
+            th(style="padding: 1rem;") Nombre
+            th(style="padding: 1rem;") Objetivos
+            th(style="padding: 1rem;") Tiempo
+            th(style="padding: 1rem;") Acciones
+        tbody
+          each m in modes
+            tr(style="border-bottom: 1px solid #21262d;")
+              td(style="padding: 1rem; font-weight: 600;")= m.name
+              td(style="padding: 1rem;")= m.target_count
+              td(style="padding: 1rem;") #{m.time_limit}s
+              td(style="padding: 1rem;")
+                button(style="background: #f85149; padding: 5px 10px; width: auto; font-size: 0.8rem;", onclick=`deleteMode(${m.id})`) Eliminar
+
+      h3(style="margin-bottom: 1.5rem;") Añadir Nuevo Modo
+      form#add-mode-form(style="max-width: 500px;")
+        .form-group
+          label Nombre del Modo (slug)
+          input(type="text", name="name", placeholder="ej: microshot", required)
+        .form-group
+          label Descripción
+          input(type="text", name="description", placeholder="Descripción breve...", required)
+        .dashboard-grid(style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;")
+          .form-group
+            label Objetivos
+            input(type="number", name="target_count", value="3", required)
+          .form-group
+            label Tiempo (segundos)
+            input(type="number", name="time_limit", value="30", required)
+        button(type="submit") Crear Modo de Juego
+
+  script.
+    document.getElementById('add-mode-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      
+      try {
+        const response = await fetch('/api/game-modes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          alert('Modo de juego creado!');
+          location.reload();
+        } else {
+          alert('Error: ' + result.message);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    async function deleteMode(id) {
+      if (!confirm('¿Seguro que quieres eliminar este modo? Se borrarán todas sus puntuaciones.')) return;
+      try {
+        const response = await fetch(`/api/game-modes/${id}`, { method: 'DELETE' });
+        const result = await response.json();
+        if (result.status === 'success') {
+          alert('Modo de juego eliminado!');
+          location.reload();
+        } else {
+          alert('Error: ' + result.message);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
