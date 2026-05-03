@@ -5,10 +5,9 @@ const bcrypt = require('bcrypt');
 async function initDb() {
     try {
         console.log('🔄 Sincronizando base de datos...');
-        await sequelize.sync({ force: true }); // WARNING: This deletes existing data!
+        await sequelize.sync({ force: true }); 
         console.log('✅ Tablas creadas correctamente.');
 
-        // Crear tabla de sesiones si no existe (requerida por connect-pg-simple)
         console.log('📦 Creando tabla de sesiones...');
         await sequelize.query(`
             CREATE TABLE IF NOT EXISTS "session" (
@@ -28,7 +27,7 @@ async function initDb() {
         `);
         console.log('✅ Tabla de sesiones lista.');
 
-        // Crear Modos de Juego por defecto
+
         console.log('🎮 Creando modos de juego por defecto...');
         await GameMode.bulkCreate([
             {
@@ -46,7 +45,6 @@ async function initDb() {
         ]);
         console.log('✅ Modos de juego creados.');
 
-        // Crear Admin por defecto
         console.log('👤 Creando administrador...');
         const adminPassword = await bcrypt.hash('admin123', 10);
         await User.create({

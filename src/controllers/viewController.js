@@ -1,19 +1,11 @@
 const { GameMode, User, Score } = require('../models');
 
-/**
- * Renders the login page.
- * Redirects to home if user is already logged in.
- */
 exports.renderLogin = (req, res) => {
     if (req.session.userId) {
         return res.redirect('/');
     }
     res.render('login');
 };
-
-/**
- * Renders the home page with available game modes.
- */
 exports.renderHome = async (req, res, next) => {
     try {
         const modes = await GameMode.findAll();
@@ -28,9 +20,6 @@ exports.renderHome = async (req, res, next) => {
     }
 };
 
-/**
- * Renders the game page for a specific mode.
- */
 exports.renderGame = async (req, res, next) => {
     try {
         const { modeName } = req.params;
@@ -50,9 +39,6 @@ exports.renderGame = async (req, res, next) => {
     }
 };
 
-/**
- * Renders the admin dashboard.
- */
 exports.renderAdmin = async (req, res, next) => {
     try {
         const usersCount = await User.count();

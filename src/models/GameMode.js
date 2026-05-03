@@ -1,10 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/sequelize');
 
-/**
- * GameMode Model
- * Represents different training modes (e.g., Gridshot, Sixshot).
- */
 const GameMode = sequelize.define('GameMode', {
     id: {
         type: DataTypes.INTEGER,

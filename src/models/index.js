@@ -2,7 +2,7 @@ const User = require('./User');
 const GameMode = require('./GameMode');
 const Score = require('./Score');
 
-// Associations
+
 User.hasMany(Score, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Score.belongsTo(User, { foreignKey: 'userId' });
 

@@ -1,10 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/sequelize');
 
-/**
- * Score Model
- * Represents a single game performance record.
- */
 const Score = sequelize.define('Score', {
     id: {
         type: DataTypes.INTEGER,

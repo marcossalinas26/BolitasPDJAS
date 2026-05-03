@@ -1,18 +1,11 @@
 const { Score, User, GameMode } = require('../models');
 
-/**
- * Saves a new score for the authenticated user.
- * 
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware
- */
 exports.postScore = async (req, res, next) => {
     try {
         const { gameType, points, accuracy } = req.body;
         const userId = req.session.userId;
 
-        // Find the game mode by name
+
         const mode = await GameMode.findOne({ where: { name: gameType } });
         if (!mode) {
             return res.status(404).json({ status: 'error', message: 'Modo de juego no encontrado' });
@@ -31,13 +24,6 @@ exports.postScore = async (req, res, next) => {
     }
 };
 
-/**
- * Retrieves the ranking for a specific game mode with pagination.
- * 
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware
- */
 exports.getRanking = async (req, res, next) => {
     try {
         const { gameType } = req.params;
@@ -58,7 +44,7 @@ exports.getRanking = async (req, res, next) => {
             offset
         });
 
-        // Flatten the response for the frontend
+
         const formattedData = rows.map(score => ({
             username: score.User.username,
             points: score.points,
@@ -79,10 +65,6 @@ exports.getRanking = async (req, res, next) => {
         next(err);
     }
 };
-
-/**
- * Retrieves all available game modes.
- */
 exports.getGameModes = async (req, res, next) => {
     try {
         const modes = await GameMode.findAll();
@@ -92,9 +74,6 @@ exports.getGameModes = async (req, res, next) => {
     }
 };
 
-/**
- * Creates a new game mode (Admin only).
- */
 exports.createGameMode = async (req, res, next) => {
     try {
         const { name, description, target_count, time_limit } = req.body;
@@ -105,14 +84,11 @@ exports.createGameMode = async (req, res, next) => {
     }
 };
 
-/**
- * Deletes a score record (Admin only).
- */
 exports.deleteScore = async (req, res, next) => {
     try {
         const { id } = req.params;
         const deleted = await Score.destroy({ where: { id } });
-        
+
         if (deleted) {
             res.json({ status: 'success', message: 'Puntuación eliminada correctamente' });
         } else {
@@ -123,14 +99,11 @@ exports.deleteScore = async (req, res, next) => {
     }
 };
 
-/**
- * Deletes a game mode (Admin only).
- */
 exports.deleteGameMode = async (req, res, next) => {
     try {
         const { id } = req.params;
         const deleted = await GameMode.destroy({ where: { id } });
-        
+
         if (deleted) {
             res.json({ status: 'success', message: 'Modo de juego eliminado correctamente' });
         } else {
